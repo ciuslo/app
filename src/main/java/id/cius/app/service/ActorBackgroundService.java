@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import id.cius.app.model.Actor;
@@ -16,11 +17,11 @@ import id.cius.app.model.Actor;
 public class ActorBackgroundService implements MessageListener {
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
     
     public static List<String> messageList = new ArrayList<String>();
 
-    private Long add;
+
     
     @Override
     public void onMessage(Message message, byte[] patern) {
@@ -50,7 +51,7 @@ public class ActorBackgroundService implements MessageListener {
     }
 
     private void fetchActor(String a) {
-        redisTemplate.opsForSet().add("arg0", "Tes"+a);
+        redisTemplate.opsForSet().add("arg0", a);
     }
 
     

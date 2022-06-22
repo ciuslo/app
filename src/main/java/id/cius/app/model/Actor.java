@@ -25,6 +25,10 @@ public class Actor implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp lastUpdate;
 
+    public Actor(){
+        
+    }
+
     public Integer getId() {
         return id;
     }
@@ -57,4 +61,9 @@ public class Actor implements Serializable {
         this.lastUpdate = lastUpdate;
     }
 
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return super.toString();
+    }
 }

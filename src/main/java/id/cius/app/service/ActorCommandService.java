@@ -20,7 +20,7 @@ public class ActorCommandService{
     private ActorRepository  actorRepository;
 
     @Autowired
-    private RedisTemplate<Integer, Actor> redisTemplate;
+    private RedisTemplate<String, Actor> redisTemplate;
 
     public Actor simpan(Actor a){
         Actor savedActor = actorRepository.save(a);    

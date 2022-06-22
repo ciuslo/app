@@ -1,7 +1,10 @@
 package id.cius.app.model;
 
 import javax.persistence.*;
-import java.time.Instant;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "actor")
@@ -18,7 +21,8 @@ public class Actor {
     private String lastName;
 
     @Column(name = "last_update", nullable = false)
-    private Instant lastUpdate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Timestamp lastUpdate;
 
     public Integer getId() {
         return id;
@@ -44,11 +48,11 @@ public class Actor {
         this.lastName = lastName;
     }
 
-    public Instant getLastUpdate() {
+    public Timestamp getLastUpdate() {
         return lastUpdate;
     }
 
-    public void setLastUpdate(Instant lastUpdate) {
+    public void setLastUpdate(Timestamp lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 

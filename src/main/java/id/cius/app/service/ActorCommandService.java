@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import id.cius.app.model.Actor;
@@ -18,8 +19,15 @@ public class ActorCommandService{
     @Autowired
     private ActorRepository  actorRepository;
 
+    @Autowired
+    private RedisTemplate<Integer, Actor> redisTemplate;
+
     public Actor simpan(Actor a){
-        return actorRepository.save(a);        
+        Actor savedActor = actorRepository.save(a);    
+        if(savedActor.getId()!=null){
+            redisTemplate.convertAndSend("searchEngine", savedActor);
+        }    
+        return savedActor;
     }
 
   

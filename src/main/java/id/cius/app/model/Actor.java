@@ -4,11 +4,12 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "actor")
-public class Actor {
+public class Actor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "actor_id", nullable = false)

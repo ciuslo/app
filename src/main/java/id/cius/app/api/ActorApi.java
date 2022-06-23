@@ -39,7 +39,8 @@ public class ActorApi {
     @RequestMapping("/search")
     public List<Actor> getActorById(String keyword){
         logger.info("message");
-        return actorQueryService.search(keyword);
+        // return actorQueryService.search(keyword);
+        return actorQueryService.searchRedis(keyword);
     }
 
     @PostMapping("/")

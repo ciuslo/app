@@ -17,12 +17,7 @@ import id.cius.app.service.ActorBackgroundService;
 @Configuration
 public class RedisConfiguration {
 
-    @Bean
-    RedisTemplate<Integer, Actor> actorRedisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<Integer, Actor> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        return template;
-    }
+    
 
     @Bean
     RedisTemplate<String, Actor> actorStringRedisTemplate(RedisConnectionFactory connectionFactory) {
@@ -32,15 +27,15 @@ public class RedisConfiguration {
     }
 
     @Bean
-    MessageListenerAdapter messageListener() {
-        return new MessageListenerAdapter(new ActorBackgroundService());
+    MessageListenerAdapter messageListener(ActorBackgroundService actorBackgroundService) {
+        return new MessageListenerAdapter(actorBackgroundService);
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory) {
+    RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory, MessageListenerAdapter messageListenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(messageListener(), topic());
+        container.addMessageListener(messageListenerAdapter, topic());
         return container;
     }
 

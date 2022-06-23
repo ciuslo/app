@@ -13,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import com.google.gson.Gson;
 
 import id.cius.app.model.Actor;
 
@@ -22,22 +25,14 @@ public class ActorBackgroundService implements MessageListener {
 
     Logger logger = org.apache.logging.log4j.LogManager.getLogger(ActorBackgroundService.class);
 
-    public static List<String> messageList = new ArrayList<String>();
-
     @Autowired
-    private RedisTemplate<String, Actor> redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public void onMessage(Message message, byte[] patern) {
-        messageList.add(message.toString());
-        System.out.println("Message received: " + message.toString());
-
         String channel = new String(message.getChannel());
-        System.out.println("channel " + channel);
-
         switch (channel) {
             case "searchEngine":
-                logger.debug("MASUK SINI");
                 try {
                     fetchActor((Actor) deserialize(message.getBody()));
                 } catch (ClassNotFoundException e) {
@@ -54,8 +49,8 @@ public class ActorBackgroundService implements MessageListener {
     }
 
     private void fetchActor(Actor a) {
-        logger.info("ACTOR "+a.getFirstName()+" "+a.getLastName());
-        redisTemplate.opsForSet().add("arg0", a);
+        // logger.info("ACTOR "+a.getFirstName()+" "+a.getLastName());
+        redisTemplate.opsForSet().add("name_"+a.getFirstName().substring(0, 2   ).toLowerCase(), new Gson().toJson(a));
     }
 
     public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {

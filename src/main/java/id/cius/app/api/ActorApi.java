@@ -48,4 +48,10 @@ public class ActorApi {
         logger.info("message");
         return actorCommandService.simpan(actor);
     }
+
+    @PostMapping("/add")
+    public Actor addKafka(Actor actor){
+        logger.info("message");
+        return actorCommandService.add(actor);
+    }
 }

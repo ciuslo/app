@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import id.cius.app.model.Actor;
@@ -22,6 +25,8 @@ public class ActorCommandService{
     @Autowired
     private RedisTemplate<String, Actor> redisTemplate;
 
+    Logger logger = org.apache.logging.log4j.LogManager.getLogger(ActorCommandService.class);
+
     public Actor simpan(Actor a){
         Actor savedActor = actorRepository.save(a);    
         if(savedActor.getId()!=null){
@@ -30,6 +35,36 @@ public class ActorCommandService{
         return savedActor;
     }
 
-  
+    @Autowired
+    private KafkaTemplate<String, String> producer;
+
+    @Autowired
+    private NewTopic topic;
+
+    public Actor add(Actor actor){
+        Actor savedActor = actorRepository.save(actor);
+
+        if(savedActor != null){
+            if(savedActor.getId() > 0){
+                redisTemplate.convertAndSend(
+                        "search_engine", actor.toString());
+
+                producer.send(topic.name(), actor.getId().toString(), actor.toString()).addCallback(
+                        result -> {
+                            // final RecordMetadata m;
+                            if (result != null) {
+//                                m = result.getRecordMetadata();
+//                                logger.info("Produced record to topic {} partition {} @ offset {}",
+//                                        m.topic(),
+//                                        m.partition(),
+//                                        m.offset());
+                            }
+                        },
+                        exception -> logger.error("Failed to produce to kafka", exception));
+            }
+        }
+
+        return savedActor;
+    }
 
 }

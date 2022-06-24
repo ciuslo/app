@@ -8,12 +8,14 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -27,6 +29,13 @@ public class ActorBackgroundService implements MessageListener {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+
+    @KafkaListener(topics = "#{'${io.confluent.developer.config.topic.name}'}",
+    groupId = "actorJalan")
+    public void consume(final ConsumerRecord<String, String> consumerRecord) {
+        logger.info("received {} {}", consumerRecord.key(), consumerRecord.value());
+    }
 
     @Override
     public void onMessage(Message message, byte[] patern) {

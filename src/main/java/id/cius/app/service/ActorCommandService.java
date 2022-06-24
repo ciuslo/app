@@ -12,6 +12,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+
 import id.cius.app.model.Actor;
 import id.cius.app.repository.ActorRepository;
 
@@ -46,10 +48,10 @@ public class ActorCommandService{
 
         if(savedActor != null){
             if(savedActor.getId() > 0){
-                redisTemplate.convertAndSend(
-                        "search_engine", actor.toString());
-
-                producer.send(topic.name(), actor.getId().toString(), actor.toString()).addCallback(
+                // redisTemplate.convertAndSend(
+                //         "search_engine", actor.toString());
+                
+                producer.send(topic.name(), actor.getId().toString(), new Gson().toJson(actor)).addCallback(
                         result -> {
                             // final RecordMetadata m;
                             if (result != null) {
